@@ -1,4 +1,4 @@
-package springhibernate.assignment.service;
+package springhibernate.assignment.service.serviceInterfaces;
 
 import springhibernate.assignment.entities.Game;
 
@@ -12,4 +12,7 @@ public interface GameService
     public void deleteById(int id);
 
 
+    List<Game> findALL(int page, int size);
+
+    List<Game> findBySort(String sort, String order, int start, int size);
 }

@@ -1,11 +1,18 @@
 package springhibernate.assignment.entities;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name="games")
+@Getter @Setter @RequiredArgsConstructor
 public class Game
 {
     @Id
@@ -19,7 +26,8 @@ public class Game
     @Column(name="description")
     private String description;
 
-    @Column(name="price")
+
+     @Column(name="price")
     private int price;
 
     @ManyToMany(cascade ={CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
@@ -27,55 +35,6 @@ public class Game
                 joinColumns=@JoinColumn(name="id"),
                 inverseJoinColumns =@JoinColumn(name="username"))
     private List<Customer> customers;
-
-
-    public Game(){}
-
-    public Game(String name, String description, int price) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public List<Customer> getCustomers() {
-        return customers;
-    }
-
-    public void setCustomers(List<Customer> customers) {
-        this.customers = customers;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
 
     public void add(Customer customer)
     {

@@ -1,4 +1,4 @@
-package springhibernate.assignment.service;
+package springhibernate.assignment.service.serviceInterfaces;
 
 import springhibernate.assignment.entities.Customer;
 

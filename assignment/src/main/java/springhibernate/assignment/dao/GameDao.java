@@ -1,11 +1,8 @@
 package springhibernate.assignment.dao;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 import springhibernate.assignment.entities.Game;
 
 import java.util.List;
-import java.util.Optional;
 
 
 public interface GameDao 
@@ -18,4 +15,8 @@ public interface GameDao
     void save(Game game);
 
     void deleteById(int id);
+
+    List<Game> findAll(int page, int size);
+
+    List<Game> findBySort(String sort, String order, int start, int size);
 }

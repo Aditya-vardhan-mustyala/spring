@@ -32,7 +32,13 @@ public class DemoSecurityConfig extends WebSecurityConfigurerAdapter
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-			.antMatchers("/cart/**").hasRole("CUSTOMER")
+				.antMatchers("/cart/**").hasRole("CUSTOMER")
+				.antMatchers("/addtocart").hasRole("CUSTOMER")
+				.antMatchers("/deletefromcart").hasRole("CUSTOMER")
+				.antMatchers("/showFormForAdd").hasRole("ADMIN")
+				.antMatchers("/showFormForUpdate").hasRole("ADMIN")
+				.antMatchers("/saveGame").hasRole("ADMIN")
+				.antMatchers("/saveGame").hasRole("ADMIN")
 		.and()
 		.formLogin()
 			.loginPage("/customLogin")
@@ -43,5 +49,6 @@ public class DemoSecurityConfig extends WebSecurityConfigurerAdapter
 		.exceptionHandling()
 			.accessDeniedPage("/accessDenied");
 	}
+
 
 }

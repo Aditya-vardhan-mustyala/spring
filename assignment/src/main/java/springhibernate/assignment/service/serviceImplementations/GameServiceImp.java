@@ -1,13 +1,13 @@
-package springhibernate.assignment.service;
+package springhibernate.assignment.service.serviceImplementations;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import springhibernate.assignment.dao.GameDao;
 import springhibernate.assignment.entities.Game;
+import springhibernate.assignment.service.serviceInterfaces.GameService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class GameServiceImp implements GameService
@@ -42,5 +42,15 @@ public class GameServiceImp implements GameService
     public void deleteById(int id)
     {
         gameDao.deleteById(id);
+    }
+
+    @Override
+    public List<Game> findALL(int page, int size) {
+        return gameDao.findAll(page,size);
+    }
+
+    @Override
+    public List<Game> findBySort(String sort, String order, int start, int size) {
+        return gameDao.findBySort(sort,order,start,size);
     }
 }

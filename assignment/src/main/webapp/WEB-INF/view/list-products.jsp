@@ -174,6 +174,7 @@ span.reg{
     <!-- Right-sided navbar links -->
 
     <div class="w3-right w3-hide-small">
+
     <security:authorize access="isAuthenticated()">
     <span class="w3-bar-item w3-button">Hello, <security:authentication property="principal.username"/></span>
     <a href="javascript:;" onclick="document.getElementById('form1').submit();" class="w3-bar-item w3-button "><i class="fa fa-sign-out" aria-hidden="true" ></i>LOGOUT</a>
@@ -191,9 +192,24 @@ span.reg{
 <form:form id="form1" action="${pageContext.request.contextPath}/logout" method="POST" style="display:none;visibility:hidden;">
 </form:form>
 
-<div class="container" style="padding:128px 16px">
+<div class="container" style="padding:100px 16px 0px">
+    <form action="/products" method="get">
+        <input type="submit" value="sort" style="margin-right:20px;">
+        According to <select name="sort" style="margin-right:20px;" required>
+                    <option value="name">Name</option>
+                    <option value="price" >Price</option>
+                </select>
 
-	<h3 >Products</h3>
+
+
+        <input type="radio" name="order" value="asc" required> ASC
+        <input type="radio" name="order" value="desc"> DESC
+        <input type="hidden" name="page" value="${page}">
+    </form>
+</div>
+<div class="container" style="padding:50px 16px">
+
+    <h3 >Products</h3>
 	<hr>
 
     <div class="container" >
@@ -203,9 +219,11 @@ span.reg{
 				<th>Name</th>
 				<th>Description</th>
 				<th>Price</th>
+
 				<security:authorize access="hasRole('CUSTOMER')">
 				<th>Buy</th>
 				</security:authorize>
+
 				<security:authorize access="hasRole('ADMIN')">
 				<th>Action</th>
                 </security:authorize>
@@ -218,6 +236,7 @@ span.reg{
                 <td> ${game.name} </td>
                 <td> ${game.description} </td>
                 <td> ${game.price} </td>
+
                 <security:authorize access="hasRole('CUSTOMER')">
                 <c:url var="cartLink" value="/addtocart">
                      <c:param name="gameId" value="${game.id}" />
@@ -239,7 +258,7 @@ span.reg{
                         <a href="${updateLink}" class="btn btn-dark btn-sm">Update</a>
                         |
                         <a href="${deleteLink}"
-                           onclick="if (!(confirm('Are you sure you want to delete this customer?'))) return false" class="btn btn-dark btn-sm">Delete</a>
+                           onclick="if (!(confirm('Are you sure you want to delete this game?'))) return false" class="btn btn-dark btn-sm">Delete</a>
                     </td>
                 </security:authorize>
 
@@ -254,6 +273,34 @@ span.reg{
        		Add Game
        	</a></p>
     </security:authorize>
+
+    <c:set var="page" value="${page}"/>
+
+     <c:url var="prevLink" value="/products">
+        <c:param name="page" value="${page - 1}" />
+        <c:param name="sort" value="${sort}" />
+        <c:param name="order" value="${order}" />
+     </c:url>
+
+
+     <c:url var="nextLink" value="/products">
+         <c:param name="page" value="${page + 1}" />
+         <c:param name="sort" value="${sort}" />
+         <c:param name="order" value="${order}" />
+     </c:url>
+
+     <nav aria-label="Page navigation example">
+       <ul class="pagination">
+
+         <c:if test="${page != 0}">
+            <li class="page-item"><a class="page-link" href="${prevLink}">Previous</a></li>
+         </c:if>
+
+         <c:if test="${size >= 5}">
+            <li class="page-item"><a class="page-link" href="${nextLink}">Next</a></li>
+         </c:if>
+       </ul>
+     </nav>
 
 </div>
 

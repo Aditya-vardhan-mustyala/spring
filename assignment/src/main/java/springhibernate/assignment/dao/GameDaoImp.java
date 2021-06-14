@@ -6,8 +6,8 @@ import org.springframework.stereotype.Repository;
 import springhibernate.assignment.entities.Game;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class GameDaoImp implements GameDao
@@ -42,5 +42,26 @@ public class GameDaoImp implements GameDao
         Session sess=entityManager.unwrap(Session.class);
         sess.createQuery("delete from Game where id="+id).executeUpdate();
 
+    }
+
+    @Override
+    public List<Game> findAll(int page, int size)
+    {
+        Session sess=entityManager.unwrap(Session.class);
+        Query query=sess.createQuery("from Game");
+        query.setFirstResult(page);
+        query.setMaxResults(size);
+        return query.getResultList();
+
+    }
+
+    @Override
+    public List<Game> findBySort(String sort, String order, int start, int size)
+    {
+        Session sess=entityManager.unwrap(Session.class);
+        Query query=sess.createQuery("from Game order by "+sort+" "+order);
+        query.setFirstResult(start);
+        query.setMaxResults(size);
+        return query.getResultList();
     }
 }

@@ -1,18 +1,20 @@
 package springhibernate.assignment.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import springhibernate.assignment.dto.GameDto;
+import springhibernate.assignment.dto.DtoConvertor;
 import springhibernate.assignment.entities.Game;
 import springhibernate.assignment.entities.Customer;
-import springhibernate.assignment.service.GameService;
-import springhibernate.assignment.service.CustomerService;
+import springhibernate.assignment.service.serviceInterfaces.GameService;
+import springhibernate.assignment.service.serviceInterfaces.CustomerService;
 
-import javax.annotation.PostConstruct;
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -24,17 +26,20 @@ public class GameController
     @Autowired
     private CustomerService customerService;
 
+    @Autowired
+    private DtoConvertor gameDto;
+
     private Customer customer;
 
 
     private void getCustomer()
     {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username="none";
+        var username="none";
         if (principal instanceof UserDetails) {
             username = ((UserDetails)principal).getUsername();
         }
-        System.out.println(username);
+
         customer = customerService.findById(username);
     }
 
@@ -53,11 +58,48 @@ public class GameController
     @RequestMapping("/products")
     public String getall(Model model)
     {
-        List<Game> games=gameService.findALL();
+        return "redirect:/products?page=0&sort&order";
+
+    }
+
+//    @RequestMapping(value="/products",params = {"page"})
+//    public String getPagination(@RequestParam("page") int page,Model model)
+//    {
+//        int size=5;
+//        int start=page*size;
+//        List<Game> games=gameService.findALL(start,size);
+//
+//        model.addAttribute("allgames",games);
+//        model.addAttribute("size",games.size());
+//        model.addAttribute("page",page);
+//        return "list-products";
+//    }
+
+    @RequestMapping(value="/products",params = {"page","sort","order"})
+    public String getallsort(@RequestParam("page") int page,@RequestParam("sort") String sort,@RequestParam("order") String order, Model model)
+    {
+        int size=5;
+        int start=page*size;
+        List<Game> games;
+
+        if(sort.equals("")) {
+            games=gameService.findALL(start,size);
+        }
+        else{
+
+            games = gameService.findBySort(sort, order,start,size);
+        }
 
         model.addAttribute("allgames",games);
+        model.addAttribute("size",games.size());
+        model.addAttribute("page",page);
+        model.addAttribute("sort",sort);
+        model.addAttribute("order",order);
         return "list-products";
+
     }
+
+
     @RequestMapping("/accessDenied")
     public String accessDenied() {
         return "redirect:/";
@@ -66,10 +108,11 @@ public class GameController
     @RequestMapping("/showFormForAdd")
     public String showFormForAdd(Model model) {
 
-        // create model attribute to bind form data
-        Game gam = new Game();
 
-        model.addAttribute("game", gam);
+        var gam = new Game();
+
+
+        model.addAttribute("game", gameDto.entityToDto(gam));
 
         return "form";
     }
@@ -78,17 +121,21 @@ public class GameController
     public String showFormForUpdate(@RequestParam("gameId") int id, Model model)
     {
 
-       Game game=gameService.findById(id);
-       model.addAttribute("game",game);
+       var game=gameService.findById(id);
+       model.addAttribute("game",gameDto.entityToDto((game)));
        return "form";
     }
 
     @PostMapping("/saveGame")
-    public String save(@ModelAttribute("game") Game game) {
+    public String save(@Valid @ModelAttribute("game") GameDto dto, BindingResult result) {
 
+
+        var game=gameDto.dtoToEntity(dto);
         // save the customer using our service
-        gameService.save(game);
+        if(result.hasErrors())
+            return "form";
 
+        gameService.save(game);
         return "redirect:/products";
     }
 
@@ -103,18 +150,24 @@ public class GameController
     @GetMapping("/addtocart")
     public String addtocart(@RequestParam("gameId") int id, Model model)
     {
-        Game game=gameService.findById(id);
+        var game=gameService.findById(id);
         getCustomer();
 
         List<Game> allgames=customer.getGames();
-        System.out.println(allgames);
+
+        var flag=1;
         for(Game thegame : allgames)
            if(thegame.getId()==game.getId())
-               return "redirect:/cart";
+           {
+               flag=0;
+               break;
+           }
 
-        customer.add(game);
-        customerService.save(customer);
 
+        if(flag==1) {
+            customer.add(game);
+            customerService.save(customer);
+        }
         return "redirect:/cart";
 
     }
@@ -122,15 +175,14 @@ public class GameController
     @GetMapping("/deletefromcart")
     public String delettocart(@RequestParam("gameId") int id, Model model)
     {
-        Game game=gameService.findById(id);
+        var game=gameService.findById(id);
         getCustomer();
 
 
         customer.remove(game);
-       // System.out.println(game+"b"+game.getCustomers());
+
         customerService.save(customer);
-        //gameService.save(game);
-        //System.out.println(game+"e"+game.getCustomers());
+
         return "redirect:/cart";
 
     }
@@ -138,19 +190,11 @@ public class GameController
     public String showcart(Model model)
     {
         getCustomer();
-//        List<Game> allgames=gameService.findALL();
-//
-//        for(Game thegame : allgames)
-//            System.out.println(thegame.getCustomers());
+
         model.addAttribute("games", customer.getGames());
         return "cart";
     }
 
-//    @GetMapping("/cart")
-//    public String cart(Model model)
-//    {
-//        return "showcart";
-//    }
 
 
 }

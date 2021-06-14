@@ -1,9 +1,10 @@
-package springhibernate.assignment.service;
+package springhibernate.assignment.service.serviceImplementations;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import springhibernate.assignment.dao.CustomerRepository;
 import springhibernate.assignment.entities.Customer;
+import springhibernate.assignment.service.serviceInterfaces.CustomerService;
 
 import java.util.Optional;
 

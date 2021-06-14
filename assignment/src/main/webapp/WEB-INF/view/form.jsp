@@ -156,7 +156,13 @@ span.reg{
   .cancelbtn {
      width: 100%;
   }
+
 }
+</style>
+<style>
+.error{
+  color:red !important;
+  }
 </style>
 
 </head>
@@ -207,7 +213,7 @@ span.reg{
 				<tbody>
 					<tr>
 						<td><label>Name:</label></td>
-						<td><form:input class="form-control" path="name" /></td>
+						<td><form:input class="form-control" path="name" /><form:errors path="name" cssClass="error"/></td>
 					</tr>
 
 					<tr>
@@ -217,7 +223,7 @@ span.reg{
 
 					<tr>
 						<td><label>Price:</label></td>
-						<td><form:input class="form-control " path="price" /></td>
+						<td><form:input class="form-control " path="price" /><form:errors path="price" cssClass="error"/></td>
 					</tr>
 
 					<tr>

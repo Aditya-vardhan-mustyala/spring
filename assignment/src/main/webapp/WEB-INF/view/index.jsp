@@ -172,6 +172,7 @@ span.reg{
     <!-- Right-sided navbar links -->
 
     <div class="w3-right w3-hide-small">
+
     <security:authorize access="isAuthenticated()">
     <span class="w3-bar-item w3-button">Hello, <security:authentication property="principal.username"/></span>
     <a href="javascript:;" onclick="document.getElementById('form1').submit();" class="w3-bar-item w3-button "><i class="fa fa-sign-out" aria-hidden="true" ></i>LOGOUT</a>
